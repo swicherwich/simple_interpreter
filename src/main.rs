@@ -24,26 +24,26 @@ fn execute_method(
     for token in program {
         match token {
             TokenKind::Integer(int) => {
-                println!("push: {}", int);
+                println!("    push: {}", int);
                 method_stack.push(*int);
             }
             TokenKind::OpPlus => {
                 let a: i32 = method_stack.pop()
                     .expect("Stack is empty!");
-                println!("pop:  {}", &a);
+                println!("    pop:  {}", &a);
                 let b: i32 = method_stack.pop()
                     .expect("Stack is empty!");
-                println!("pop:  {}", &b);
+                println!("    pop:  {}", &b);
                 let res: i32 = a + b;
-                println!("plus");
+                println!("    plus");
                 method_stack.push(res);
-                println!("push: {}", res);
+                println!("    push: {}", res);
             },
             TokenKind::OpDump => {
                 let a: i32 = method_stack.pop()
                     .expect("Stack is empty!");
-                println!("pop:  {}", &a);
-                println!("dump: {}", a);
+                println!("    pop:  {}", &a);
+                println!("    dump: {}", a);
             },
             TokenKind::Call(method_name) => {
                 let program: &Vec<TokenKind> = methods.get(method_name)
@@ -54,7 +54,8 @@ fn execute_method(
                 let a = method_stack.pop().expect("Method stack is empty!");
                 main_stack.push(a);
             }
-            TokenKind::Method(_, _) => println!("Method declaration scope not allowed!")
+            TokenKind::Method(_, _) => println!("Method declaration scope not allowed!"),
+            _ => continue
         }
     }
 }
@@ -89,6 +90,7 @@ fn run_program(program: &Vec<TokenKind>) {
             },
             TokenKind::Call(method_name) => {
                 let program: &Vec<TokenKind> = mathods.get(method_name).expect("No such method!");
+                println!("{}:", &method_name);
                 execute_method(program, &mut stack, &mut mathods);
             },
             _ => continue
