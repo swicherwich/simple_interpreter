@@ -4,8 +4,7 @@ pub mod lexer {
         Integer(i32),
         OpPlus,
         OpDump,
-        Method(String, Vec<TokenKind>),
-        Return,
+        Method{name: String, proc: Vec<TokenKind>},
         Call(String),
     }
 }
@@ -19,28 +18,26 @@ fn execute_method(
     main_stack: &mut Vec<i32>, 
     methods: &mut HashMap<&String, &Vec<TokenKind>>
 ) {
-    let mut method_stack: Vec<i32> = Vec::new();
-
     for token in program {
         match token {
             TokenKind::Integer(int) => {
                 println!("    push: {}", int);
-                method_stack.push(*int);
+                main_stack.push(*int);
             }
             TokenKind::OpPlus => {
-                let a: i32 = method_stack.pop()
+                let a: i32 = main_stack.pop()
                     .expect("Stack is empty!");
                 println!("    pop:  {}", &a);
-                let b: i32 = method_stack.pop()
+                let b: i32 = main_stack.pop()
                     .expect("Stack is empty!");
                 println!("    pop:  {}", &b);
                 let res: i32 = a + b;
                 println!("    plus");
-                method_stack.push(res);
+                main_stack.push(res);
                 println!("    push: {}", res);
             },
             TokenKind::OpDump => {
-                let a: i32 = method_stack.pop()
+                let a: i32 = main_stack.pop()
                     .expect("Stack is empty!");
                 println!("    pop:  {}", &a);
                 println!("    dump: {}", a);
@@ -50,11 +47,7 @@ fn execute_method(
                     .expect("No such method!");
                 execute_method(program, main_stack, methods);
             },
-            TokenKind::Return => {
-                let a = method_stack.pop().expect("Method stack is empty!");
-                main_stack.push(a);
-            }
-            TokenKind::Method(_, _) => println!("Method declaration scope not allowed!"),
+            TokenKind::Method { .. } => println!("Method declaration scope not allowed!"),
             _ => continue
         }
     }
@@ -62,7 +55,7 @@ fn execute_method(
 
 fn run_program(program: &Vec<TokenKind>) {
     let mut stack: Vec<i32> = Vec::new();
-    let mut mathods: HashMap<&String, &Vec<TokenKind>> = HashMap::new();
+    let mut methods: HashMap<&String, &Vec<TokenKind>> = HashMap::new();
 
     for token in program {
         match token {
@@ -85,13 +78,13 @@ fn run_program(program: &Vec<TokenKind>) {
                 println!("pop:  {}", &a);
                 println!("dump: {}", a);
             },
-            TokenKind::Method(method_name, program) => {
-                mathods.insert(method_name, program);
+            TokenKind::Method {  name, proc} => {
+                methods.insert(name, proc);
             },
             TokenKind::Call(method_name) => {
-                let program: &Vec<TokenKind> = mathods.get(method_name).expect("No such method!");
+                let program: &Vec<TokenKind> = methods.get(method_name).expect("No such method!");
                 println!("{}:", &method_name);
-                execute_method(program, &mut stack, &mut mathods);
+                execute_method(program, &mut stack, &mut methods);
             },
             _ => continue
         }
@@ -100,12 +93,13 @@ fn run_program(program: &Vec<TokenKind>) {
 
 fn main() {
     let program: Vec<TokenKind> = vec![
-        TokenKind::Method(String::from("sum"), vec![
-            TokenKind::Integer(1),
-            TokenKind::Integer(2),
-            TokenKind::OpPlus,
-            TokenKind::Return
-        ]),
+        TokenKind::Method {
+            name: String::from("sum"),
+            proc: vec![
+                TokenKind::Integer(1),
+                TokenKind::Integer(2),
+                TokenKind::OpPlus
+        ]},
         TokenKind::Integer(2),
         TokenKind::Call(String::from("sum")),
         TokenKind::OpPlus,
