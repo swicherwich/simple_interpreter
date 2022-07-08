@@ -1,0 +1,20 @@
+Commands:
+    - push : pushes data to stack
+    - add  : adds two top data and pushed back
+    - sub  : subtract two top data and pushed back
+    - mul  : multiplies two top data and pushed back
+    - div  : divides two top data and pushed back
+    - dup  : duplicated data from top of stack and pushed back
+    - swap : swaps two top data in stack
+    - drop : drops top data from stack
+    - peek : prints top data in stack but not drops
+    - dump : prints top data in stack and drops
+    - proc : creates named procedure
+    - call : calls procedure by name
+    - eq   : tbd
+    - nq   : tbd
+    - le   : tbd
+    - lq   : tbd
+    - ge   : tbd
+    - gq   : tbd
+    - whl  : tbd
