@@ -25,6 +25,7 @@ impl TokenKind {
         }
     }
 
+    /// Automatic Integer convertion to Float if needed
     pub fn get_as_float(self: &Self) -> Option<f32> {
         match self  {
             TokenKind::Float(f) => Some(*f),

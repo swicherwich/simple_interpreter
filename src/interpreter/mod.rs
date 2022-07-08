@@ -1,6 +1,63 @@
 use crate::lexer::TokenKind;
 use std::collections::HashMap;
 
+fn math_op(top_token: TokenKind, prev_token: TokenKind, op: TokenKind) -> TokenKind {
+    match prev_token {
+        // if 1st item is Float we can cast 2nd item and add
+        TokenKind::Float(top) => {
+            match op {
+                TokenKind::OpAdd => {
+                    let res = top + top_token.get_as_float().expect("Float type expected!");
+                    return TokenKind::Float(res)
+                }
+                TokenKind::OpSub => {
+                    let res = top - top_token.get_as_float().expect("Float type expected!");
+                    return TokenKind::Float(res)
+                }
+                TokenKind::OpDiv => {
+                    let res = top / top_token.get_as_float().expect("Float type expected!");
+                    return TokenKind::Float(res)
+                }
+                TokenKind::OpMul => {
+                    let res = top * top_token.get_as_float().expect("Float type expected!");
+                    return TokenKind::Float(res)
+                }
+                _ => panic!("Unknown operation on data!")
+            }
+        }
+        // if 1st item is integer we can add only if 2nd is integer too otherwise panic
+        TokenKind::Integer(top) => {
+            match top_token {
+                // check if 2nd item is Float (is there need to panic)
+                TokenKind::Float(_) => {
+                    panic!("Cannot automatically cast Float to Integer. Element of type Integer expected!")
+                }
+                _ => { }
+            }
+            match op {
+                TokenKind::OpAdd => {
+                    let res = top + top_token.get_as_integer().expect("Float type expected!");
+                    return TokenKind::Integer(res)
+                }
+                TokenKind::OpSub => {
+                    let res = top - top_token.get_as_integer().expect("Float type expected!");
+                    return TokenKind::Integer(res)
+                }
+                TokenKind::OpDiv => {
+                    let res = top / top_token.get_as_integer().expect("Float type expected!");
+                    return TokenKind::Integer(res)
+                }
+                TokenKind::OpMul => {
+                    let res = top * top_token.get_as_integer().expect("Float type expected!");
+                    return TokenKind::Integer(res)
+                }
+                _ => panic!("Unknown operation on data!")
+            }
+        }
+        // if 1st item is not Float neither Integer
+        _ => panic!("Type mismatch: integer or float expected! Got: {:#?}", prev_token)
+    }
+}
 
 pub fn run_program(program: &Vec<TokenKind>, stack: &mut Vec<TokenKind>) -> Vec<TokenKind> {
     let mut methods: HashMap<&String, &Vec<TokenKind>> = HashMap::new();
@@ -20,104 +77,28 @@ pub fn run_program(program: &Vec<TokenKind>, stack: &mut Vec<TokenKind>) -> Vec<
                 stack.push(TokenKind::Bool(*b));
             }
             TokenKind::OpAdd => {
-                let prev_token = stack.pop().expect("Stack is empty!"); // 2nd item on stack
                 let top_token = stack.pop().expect("Stack is empty!"); // 1st item on stack
-                match top_token {
-                    // if 1st item is Float we can cast 2nd item and add
-                    TokenKind::Float(top) => {
-                        let res = top + prev_token.get_as_float().expect("Float type expected!");
-                        stack.push(TokenKind::Float(res));
-                    }
-                    // if 1st item is integer we can add only if 2nd is integer too otherwise panic
-                    TokenKind::Integer(top) => {
-                        match prev_token {
-                            // check if 2nd item is Float (is there need to panic)
-                            TokenKind::Float(_) => {
-                                panic!("Cannot automatically cast Float to Integer. Element of type Integer expected!")
-                            }
-                            _ => { }
-                        }
-                        let res = top + prev_token.get_as_integer().expect("Float type expected!");
-                        stack.push(TokenKind::Integer(res));
-                    }
-                    // if 1st item is not Float neither Integer
-                    _ => panic!("Type mismatch: integer or float expected!")
-                }
+                let prev_token = stack.pop().expect("Stack is empty!");  // 2nd item on stack
+                let res_token = math_op(top_token, prev_token, TokenKind::OpAdd);
+                stack.push(res_token);
             }
             TokenKind::OpSub => {
-                let prev_token = stack.pop().expect("Stack is empty!"); // 2nd item on stack
                 let top_token = stack.pop().expect("Stack is empty!"); // 1st item on stack
-                match top_token {
-                    // if 1st item is Float we can cast 2nd item and add
-                    TokenKind::Float(top) => {
-                        let res = top - prev_token.get_as_float().expect("Float type expected!");
-                        stack.push(TokenKind::Float(res));
-                    }
-                    // if 1st item is integer we can add only if 2nd is integer too otherwise panic
-                    TokenKind::Integer(top) => {
-                        match prev_token {
-                            // check if 2nd item is Float (is there need to panic)
-                            TokenKind::Float(_) => {
-                                panic!("Cannot automatically cast Float to Integer. Element of type Integer expected!")
-                            }
-                            _ => { }
-                        }
-                        let res = top - prev_token.get_as_integer().expect("Float type expected!");
-                        stack.push(TokenKind::Integer(res));
-                    }
-                    // if 1st item is not Float neither Integer
-                    _ => panic!("Type mismatch: integer or float expected!")
-                }
+                let prev_token = stack.pop().expect("Stack is empty!");  // 2nd item on stack
+                let res_token = math_op(top_token, prev_token, TokenKind::OpSub);
+                stack.push(res_token);
             }
             TokenKind::OpMul => {
-                let prev_token = stack.pop().expect("Stack is empty!"); // 2nd item on stack
                 let top_token = stack.pop().expect("Stack is empty!"); // 1st item on stack
-                match top_token {
-                    // if 1st item is Float we can cast 2nd item and add
-                    TokenKind::Float(top) => {
-                        let res = top * prev_token.get_as_float().expect("Float type expected!");
-                        stack.push(TokenKind::Float(res));
-                    }
-                    // if 1st item is integer we can add only if 2nd is integer too otherwise panic
-                    TokenKind::Integer(top) => {
-                        match prev_token {
-                            // check if 2nd item is Float (is there need to panic)
-                            TokenKind::Float(_) => {
-                                panic!("Cannot automatically cast Float to Integer. Element of type Integer expected!")
-                            }
-                            _ => { }
-                        }
-                        let res = top * prev_token.get_as_integer().expect("Float type expected!");
-                        stack.push(TokenKind::Integer(res));
-                    }
-                    // if 1st item is not Float neither Integer
-                    _ => panic!("Type mismatch: integer or float expected!")
-                }
+                let prev_token = stack.pop().expect("Stack is empty!");  // 2nd item on stack
+                let res_token = math_op(top_token, prev_token, TokenKind::OpMul);
+                stack.push(res_token);
             }
             TokenKind::OpDiv => {
-                let prev_token = stack.pop().expect("Stack is empty!"); // 2nd item on stack
                 let top_token = stack.pop().expect("Stack is empty!"); // 1st item on stack
-                match top_token {
-                    // if 1st item is Float we can cast 2nd item and add
-                    TokenKind::Float(top) => {
-                        let res = top / prev_token.get_as_float().expect("Float type expected!");
-                        stack.push(TokenKind::Float(res));
-                    }
-                    // if 1st item is integer we can add only if 2nd is integer too otherwise panic
-                    TokenKind::Integer(top) => {
-                        match prev_token {
-                            // check if 2nd item is Float (is there need to panic)
-                            TokenKind::Float(_) => {
-                                panic!("Cannot automatically cast Float to Integer. Element of type Integer expected!")
-                            }
-                            _ => { }
-                        }
-                        let res = top / prev_token.get_as_integer().expect("Float type expected!");
-                        stack.push(TokenKind::Integer(res));
-                    }
-                    // if 1st item is not Float neither Integer
-                    _ => panic!("Type mismatch: integer or float expected!")
-                }
+                let prev_token = stack.pop().expect("Stack is empty!");  // 2nd item on stack
+                let res_token = math_op(top_token, prev_token, TokenKind::OpDiv);
+                stack.push(res_token);
             }
             TokenKind::OpSwap => {
                 let a = stack.pop().expect("Stack is empty!");
