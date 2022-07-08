@@ -1,5 +1,8 @@
+#[derive(Clone, Debug)]
 pub enum TokenKind {
     Integer(i32), // literal
+    Float(f32),   // literal
+    Bool(bool),   // literal
     OpAdd,        // ( 1 2 -- 3 )
     OpSub,        // ( 1 2 -- 1 ) top - bott
     OpMul,        // ( 2 3 -- 6 )
@@ -11,4 +14,29 @@ pub enum TokenKind {
     OpDump,       // ( 1 2 -- 1 ) puts 2
     Proc {name: String, proc: Vec<TokenKind>},
     Call(String),
+}
+
+impl TokenKind {
+
+    pub fn get_as_integer(self: &Self) -> Option<i32> {
+        match self  {
+            TokenKind::Integer(i) => Some(*i),
+            _ => None
+        }
+    }
+
+    pub fn get_as_float(self: &Self) -> Option<f32> {
+        match self  {
+            TokenKind::Float(f) => Some(*f),
+            TokenKind::Integer(i) => Some(*i as f32),
+            _ => None
+        }
+    }
+
+    pub fn get_as_bool(self: &Self) -> Option<bool> {
+        match self  {
+            TokenKind::Bool(b) => Some(*b),
+            _ => None
+        }
+    }
 }
