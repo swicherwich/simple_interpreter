@@ -5,25 +5,78 @@ mod tests {
     use simple_interpreter::lexer::TokenKind;
 
     #[test]
-    fn test_simple_math() {
+    fn test_simple_autocast() {
+        let program: Vec<TokenKind> = vec![
+            TokenKind::Float(2.0),
+            TokenKind::Integer(2),
+            TokenKind::OpAdd
+        ];
+
+        let mut res_stack = interpreter::run_program(&program, &mut Vec::new());
+        println!("{:?}", &res_stack);
+        let last_stack_item = res_stack.pop();
+
+        assert_eq!(4.0, last_stack_item.expect("").get_as_float().expect(""));
+    }
+
+    #[test]
+    #[should_panic(expected = "Cannot automatically cast Float to Integer. Element of type Integer expected!")]
+    fn test_autocast_panic() {
+        let program: Vec<TokenKind> = vec![
+            TokenKind::Integer(2),
+            TokenKind::Float(2.0),
+            TokenKind::OpAdd,
+        ];
+
+        interpreter::run_program(&program, &mut Vec::new());
+    }
+
+    #[test]
+    #[should_panic(expected = "Type mismatch: integer or float expected!")]
+    fn test_illegal_type_panic() {
+        let program: Vec<TokenKind> = vec![
+            TokenKind::Bool(true),
+            TokenKind::Integer(2),
+            TokenKind::OpAdd,
+        ];
+
+        interpreter::run_program(&program, &mut Vec::new());
+    }
+
+    #[test]
+    fn test_simple_float_add() {
+        let program: Vec<TokenKind> = vec![
+            TokenKind::Float(2.0),
+            TokenKind::Float(2.0),
+            TokenKind::OpAdd,
+        ];
+
+        let mut res_stack = interpreter::run_program(&program, &mut Vec::new());
+        println!("{:?}", &res_stack);
+        let last_stack_item = res_stack.pop();
+
+        assert_eq!(4.0, last_stack_item.expect("").get_as_float().expect(""));
+    }
+
+    #[test]
+    fn test_simple_integer_add() {
         let program: Vec<TokenKind> = vec![
             TokenKind::Integer(2),
             TokenKind::Integer(2),
             TokenKind::OpAdd,
-            TokenKind::Integer(3),
-            TokenKind::OpSub,
         ];
 
         let mut res_stack = interpreter::run_program(&program, &mut Vec::new());
+        println!("{:?}", &res_stack);
         let last_stack_item = res_stack.pop();
 
-        assert_eq!(-1, last_stack_item.expect("Stack is empty!"));
+        assert_eq!(4, last_stack_item.expect("").get_as_integer().expect(""));
     }
 
     #[test]
     fn test_swap_op() {
         let program: Vec<TokenKind> = vec![
-            TokenKind::Integer(1),
+            TokenKind::Bool(true),
             TokenKind::Integer(2),
             TokenKind::OpSwap,
         ];
@@ -31,7 +84,9 @@ mod tests {
         let mut res_stack = interpreter::run_program(&program, &mut Vec::new());
         let first_stack_item = res_stack.pop();
 
-        assert_eq!(1, first_stack_item.expect("Stack is empty!"));
+        assert_eq!(TokenKind::Bool(true).get_as_bool().expect("Bool expected!"),
+                   first_stack_item.expect("Stack is empty!")
+                       .get_as_bool().expect("Bool expected!"));
     }
 
     #[test]
@@ -45,7 +100,7 @@ mod tests {
         assert_eq!(2, res_stack.len(), "Unexpected stack length");
 
         let first_stack_item = res_stack.pop();
-        assert_eq!(2, first_stack_item.expect("Stack is empty!"));
+        assert_eq!(2, first_stack_item.expect("Stack is empty!").get_as_integer().expect("Integer expected!"));
     }
 
     #[test]
@@ -67,9 +122,11 @@ mod tests {
             TokenKind::OpPeek,
         ];
 
-        let res_stack = interpreter::run_program(&program, &mut Vec::new());
+        let mut res_stack = interpreter::run_program(&program, &mut Vec::new());
+        let first_stack_item = res_stack.pop();
 
-        assert!(res_stack.contains(&1));
+        assert_eq!(1, first_stack_item.expect("Item in stack expected")
+            .get_as_integer().expect("Integer expected"));
     }
 
     #[test]
@@ -89,29 +146,27 @@ mod tests {
         let mut res_stack = interpreter::run_program(&program, &mut Vec::new());
         let first_stack_item = res_stack.pop();
 
-        assert_eq!(9, first_stack_item.expect("Stack is empty!"));
+        assert_eq!(9, first_stack_item.expect("Stack is empty!").get_as_integer().expect("Integer expected!"));
     }
 
     #[test]
-    fn test_complex_program() {
+    fn test_float_cat_proc() {
         let program: Vec<TokenKind> = vec![
             TokenKind::Proc {
-                name: String::from("sum"),
+                name: String::from("cast_float"),
                 proc: vec![
-                    TokenKind::Integer(1),
-                    TokenKind::Integer(2),
-                    TokenKind::OpAdd
+                    TokenKind::Float(1.0),
+                    TokenKind::OpSwap,
+                    TokenKind::OpMul
                 ]
             },
             TokenKind::Integer(2),
-            TokenKind::Call(String::from("sum")),
-            TokenKind::OpAdd,
-            TokenKind::Integer(2),
-            TokenKind::OpAdd,
-            TokenKind::OpDump
+            TokenKind::Call(String::from("cast_float"))
         ];
 
-        let res_stack = interpreter::run_program(&program, &mut Vec::new());
-        assert!(res_stack.is_empty())
+        let mut res_stack = interpreter::run_program(&program, &mut Vec::new());
+        let first_stack_item = res_stack.pop();
+
+        assert_eq!(2.0, first_stack_item.expect("Stack is empty!").get_as_float().expect("Integer expected!"));
     }
 }
