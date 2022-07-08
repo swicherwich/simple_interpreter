@@ -15,8 +15,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Cd into crate
     - uses: actions/checkout@v3
+    - name: Go into crate directory
+      run: cd simple_interpreter
     - name: Build
       run: cargo build --verbose
     - name: Run tests
