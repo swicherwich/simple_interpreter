@@ -1,2 +1,2 @@
-# Welcome to ✨ Creating another one programming language page ✨
+Welcome to ✨ Creating another one programming language page ✨
 
