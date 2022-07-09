@@ -135,6 +135,66 @@ pub fn run_program(program: &Vec<TokenKind>, stack: &mut Vec<TokenKind>) -> Vec<
                 println!("call {}:", &method_name);
                 run_program(program, stack);
             }
+            TokenKind::OpEquals => {
+                let top = stack.pop().expect("Stack is empty!");
+                let prev = stack.pop().expect("Stack is empty!");
+
+                if top == prev {
+                    stack.push(TokenKind::Bool(true));
+                } else {
+                    stack.push(TokenKind::Bool(false));
+                }
+            }
+            TokenKind::OpNotEquals => {
+                let top = stack.pop().expect("Stack is empty!");
+                let prev = stack.pop().expect("Stack is empty!");
+
+                if top != prev {
+                    stack.push(TokenKind::Bool(true));
+                } else {
+                    stack.push(TokenKind::Bool(false));
+                }
+            }
+            TokenKind::OpLess => {
+                let top = stack.pop().expect("Stack is empty!");
+                let prev = stack.pop().expect("Stack is empty!");
+
+                if top < prev {
+                    stack.push(TokenKind::Bool(true));
+                } else {
+                    stack.push(TokenKind::Bool(false));
+                }
+            }
+            TokenKind::OpLessOrEquals => {
+                let top = stack.pop().expect("Stack is empty!");
+                let prev = stack.pop().expect("Stack is empty!");
+
+                if top <= prev {
+                    stack.push(TokenKind::Bool(true));
+                } else {
+                    stack.push(TokenKind::Bool(false));
+                }
+            }
+            TokenKind::OpGreater => {
+                let top = stack.pop().expect("Stack is empty!");
+                let prev = stack.pop().expect("Stack is empty!");
+
+                if top > prev {
+                    stack.push(TokenKind::Bool(true));
+                } else {
+                    stack.push(TokenKind::Bool(false));
+                }
+            }
+            TokenKind::OpGreaterOrEquals => {
+                let top = stack.pop().expect("Stack is empty!");
+                let prev = stack.pop().expect("Stack is empty!");
+
+                if top >= prev {
+                    stack.push(TokenKind::Bool(true));
+                } else {
+                    stack.push(TokenKind::Bool(false));
+                }
+            }
         }
     }
 
