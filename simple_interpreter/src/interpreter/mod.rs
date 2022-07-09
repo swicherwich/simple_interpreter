@@ -65,15 +65,12 @@ pub fn run_program(program: &Vec<TokenKind>, stack: &mut Vec<TokenKind>) -> Vec<
     for token in program {
         match token {
             TokenKind::Integer(i) => {
-                println!("push: {}", i);
                 stack.push(TokenKind::Integer(*i));
             }
             TokenKind::Float(f) => {
-                println!("push: {}", f);
                 stack.push(TokenKind::Float(*f));
             }
             TokenKind::Bool(b) => {
-                println!("push: {}", b);
                 stack.push(TokenKind::Bool(*b));
             }
             TokenKind::OpAdd => {
@@ -132,7 +129,6 @@ pub fn run_program(program: &Vec<TokenKind>, stack: &mut Vec<TokenKind>) -> Vec<
             }
             TokenKind::Call(method_name) => {
                 let program: &Vec<TokenKind> = methods.get(method_name).expect("No such method!");
-                println!("call {}:", &method_name);
                 run_program(program, stack);
             }
             TokenKind::OpEquals => {
