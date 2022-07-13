@@ -22,6 +22,7 @@ pub enum TokenKind {
     OpGreaterOrEquals,
     Proc {name: String, proc: Vec<TokenKind>},
     Call(String),
+    While(Vec<TokenKind>)
 }
 
 enum LogicOpType {
