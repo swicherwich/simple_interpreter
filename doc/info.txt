@@ -13,8 +13,8 @@ Commands:
     - call : calls procedure by name
     - eq   : top == prev
     - nq   : top != prev
-    - le   : top < prev
-    - lq   : top <= prev
-    - ge   : top > prev
-    - gq   : top >= prev
+    - le   : top > prev
+    - lq   : top >= prev
+    - ge   : top < prev
+    - gq   : top =< prev
     - whl  : tbd
