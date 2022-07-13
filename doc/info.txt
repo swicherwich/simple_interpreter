@@ -11,10 +11,10 @@ Commands:
     - dump : prints top data in stack and drops
     - proc : creates named procedure
     - call : calls procedure by name
-    - eq   : tbd
-    - nq   : tbd
-    - le   : tbd
-    - lq   : tbd
-    - ge   : tbd
-    - gq   : tbd
+    - eq   : top == prev
+    - nq   : top != prev
+    - le   : top > prev
+    - lq   : top >= prev
+    - ge   : top < prev
+    - gq   : top =< prev
     - whl  : tbd
