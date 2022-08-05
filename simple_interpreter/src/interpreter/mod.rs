@@ -257,11 +257,8 @@ pub fn run_program(program: &Vec<TokenKind>, stack: &mut Vec<TokenKind>) -> Vec<
                 let top = stack.pop().expect("Stack is empty!");
 
                 if top.get_as_bool().unwrap() == true {
-                    // swap(stack);
                     stack.pop();
                     run_program(program, stack);
-                    // swap(stack);
-                    // ip -= 1;
                 } else {
                     // 2nd operand for comparison dropped
                     stack.pop();
