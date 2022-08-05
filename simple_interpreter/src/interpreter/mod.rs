@@ -140,9 +140,9 @@ pub fn run_program(program: &Vec<TokenKind>, stack: &mut Vec<TokenKind>) -> Vec<
             TokenKind::OpDump => {
                 let a = stack.pop().expect("Stack is empty!");
                 match a {
-                    TokenKind::Integer(_) => println!("dump: {}", a.get_as_integer().expect("Integer expected")),
-                    TokenKind::Float(_) => println!("dump: {}", a.get_as_float().expect("Integer expected")),
-                    TokenKind::Bool(_) => println!("dump: {}", a.get_as_bool().expect("Integer expected")),
+                    TokenKind::Integer(_) => println!("{}", a.get_as_integer().expect("Integer expected")),
+                    TokenKind::Float(_) => println!("{}", a.get_as_float().expect("Integer expected")),
+                    TokenKind::Bool(_) => println!("{}", a.get_as_bool().expect("Integer expected")),
                     _ => panic!("Illegal operand for 'dupm'. Integer/Float/Bool expected.")
                 }
                 ip += 1;
