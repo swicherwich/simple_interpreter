@@ -140,11 +140,22 @@ pub fn run_program(program: &Vec<TokenKind>, stack: &mut Vec<TokenKind>) -> Vec<
             TokenKind::OpDump => {
                 let a = stack.pop().expect("Stack is empty!");
                 match a {
-                    TokenKind::Integer(_) => println!("dump: {}", a.get_as_integer().expect("Integer expected")),
-                    TokenKind::Float(_) => println!("dump: {}", a.get_as_float().expect("Integer expected")),
-                    TokenKind::Bool(_) => println!("dump: {}", a.get_as_bool().expect("Integer expected")),
+                    TokenKind::Integer(_) => println!("{}", a.get_as_integer().expect("Integer expected")),
+                    TokenKind::Float(_) => println!("{}", a.get_as_float().expect("Integer expected")),
+                    TokenKind::Bool(_) => println!("{}", a.get_as_bool().expect("Integer expected")),
                     _ => panic!("Illegal operand for 'dupm'. Integer/Float/Bool expected.")
                 }
+                ip += 1;
+            }
+            TokenKind::OpRot => {
+                let a = stack.pop().expect("Stack is empty");
+                let b = stack.pop().expect("Stack is empty");
+                let c = stack.pop().expect("Stack is empty");
+
+                stack.push(a);
+                stack.push(c);
+                stack.push(b);
+
                 ip += 1;
             }
             TokenKind::Proc {  name, proc} => {
@@ -240,14 +251,14 @@ pub fn run_program(program: &Vec<TokenKind>, stack: &mut Vec<TokenKind>) -> Vec<
                 }
                 ip += 1;
             }
-            TokenKind::While(program) => {
+            TokenKind::While(condition, program) => {
+                run_program(condition, stack);
+
                 let top = stack.pop().expect("Stack is empty!");
 
                 if top.get_as_bool().unwrap() == true {
-                    swap(stack);
+                    stack.pop();
                     run_program(program, stack);
-                    swap(stack);
-                    ip -= 1;
                 } else {
                     // 2nd operand for comparison dropped
                     stack.pop();
