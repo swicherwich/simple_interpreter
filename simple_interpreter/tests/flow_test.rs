@@ -8,9 +8,7 @@ mod tests {
     fn test_while_loop() {
         let program: Vec<TokenKind> = vec![
             TokenKind::Integer(1),
-            TokenKind::Integer(3),
-            TokenKind::OpGreater,
-            TokenKind::While(vec![
+            TokenKind::While(vec![TokenKind::Integer(3), TokenKind::OpGreater], vec![
                 TokenKind::OpDup,
                 TokenKind::OpDump,
                 TokenKind::Integer(1),
@@ -28,9 +26,8 @@ mod tests {
     fn test_while_loop_skip() {
         let program: Vec<TokenKind> = vec![
             TokenKind::Integer(5),
-            TokenKind::Integer(3),
-            TokenKind::OpGreater,
-            TokenKind::While(vec![
+            TokenKind::While(vec![TokenKind::Integer(3), TokenKind::OpGreater],
+                             vec![
                 TokenKind::OpDup,
                 TokenKind::OpDump,
                 TokenKind::Integer(1),

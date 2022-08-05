@@ -14,6 +14,7 @@ pub enum TokenKind {
     OpDup,        // ( 1 2 -- 1 2 2 )
     OpDrop,       // ( 1 2 -- 1 )
     OpDump,       // ( 1 2 -- 1 ) puts 2
+    OpRot,        // (1 2 3 -- 3 1 2)
     OpEquals,
     OpNotEquals,
     OpLess,
@@ -22,7 +23,7 @@ pub enum TokenKind {
     OpGreaterOrEquals,
     Proc {name: String, proc: Vec<TokenKind>},
     Call(String),
-    While(Vec<TokenKind>)
+    While(Vec<TokenKind>, Vec<TokenKind>)
 }
 
 enum LogicOpType {
@@ -94,8 +95,8 @@ impl PartialEq for TokenKind {
 
 impl PartialOrd for TokenKind {
 
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        None
+    fn partial_cmp(&self, _other: &Self) -> Option<Ordering> {
+        todo!()
     }
 
     fn lt(&self, other: &Self) -> bool {
